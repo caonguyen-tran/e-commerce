@@ -1,0 +1,111 @@
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from cloudinary.models import CloudinaryField
+
+
+class User(AbstractUser):
+    avatar = CloudinaryField('avatar', null=False)
+    is_admin = models.BooleanField(default=False)
+    is_buyer = models.BooleanField(default=True)
+    is_employee = models.BooleanField(default=False)
+    is_seller = models.BooleanField(default=False)
+
+
+class Shop(models.Model):
+    name = models.CharField(max_length=200, null=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    logo = CloudinaryField('logo', null=False)
+    confirm_status = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=200, null=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=200, null=False)
+    price = models.IntegerField(null=False)
+    description = models.TextField(null=False)
+    image = CloudinaryField('image', null=False)
+    shop = models.ForeignKey('Shop', on_delete=models.CASCADE, null=False)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
+
+    def __str__(self):
+        return self.name
+
+
+class Interaction(models.Model):
+    created_date = models.DateField(auto_now_add=True)
+    updated_date = models.DateField(auto_now=True)
+    active = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        abstract = True
+
+
+class Comment(Interaction):
+    content = models.TextField()
+    parent_cmt = models.ForeignKey("Comment", null=True, blank=True, related_name="replies", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user) + " " + self.content
+
+
+class Rating(Interaction):
+    rate = models.SmallIntegerField(default=5)
+
+    def __str__(self):
+        return self.rate
+
+
+class ReviewShop(models.Model):
+    shop = models.ForeignKey(Shop, null=False, on_delete=models.CASCADE)
+    comment = models.OneToOneField(Comment, null=True, on_delete=models.CASCADE, blank=True)
+    rating = models.OneToOneField('Rating', null=False, on_delete=models.CASCADE)
+
+
+class ReviewProduct(models.Model):
+    product = models.ForeignKey(Product, null=False, on_delete=models.CASCADE)
+    comment = models.OneToOneField(Comment, null=True, on_delete=models.CASCADE, blank=True)
+    rating = models.OneToOneField('Rating', null=False, on_delete=models.CASCADE)
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+
+
+class CartDetail(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
+    quantity = models.IntegerField(default=0)
+    total_price = models.IntegerField()
+
+
+class Order(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
+    order_date = models.DateTimeField(auto_now_add=True)
+    address = models.CharField(max_length=255)
+    coupon = models.FloatField()
+    ship_fee = models.IntegerField()
+    total_price = models.IntegerField()
+
+    class Meta:
+        ordering = ['id']
+
+
+class OrderDetail(models.Model):
+    quantity = models.IntegerField(default=0)
+    total_price = models.FloatField()
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        ordering = ['order']
