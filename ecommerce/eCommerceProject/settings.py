@@ -138,3 +138,5 @@ CKEDITOR_UPLOAD_PATH = 'image/reviews/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+client_id = "V6tjD0aBdZNFI0VFpVHhIgHVSPEnqqLLcV9L76FS"
+client_secret = "33dQ2JIA2fSoaSWzrgGeZa7nccNekZkIdfpFknVWEn2XieQfHjGvA9PxcJ8bRFoPvABYFB96TWDxerj0ty1ONezDe9DWCl2WDRWralYCZ2idSNCzZ6ld9egFsT28VvJz"

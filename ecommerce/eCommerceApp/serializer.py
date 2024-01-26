@@ -4,6 +4,27 @@ from .models import Category, Product, Shop, User
 from cloudinary import CloudinaryResource
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'is_active', 'date_joined',
+                  'avatar', 'is_admin', 'is_buyer', 'is_seller', 'is_employee']
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
+
+    def create(self, validated_data):
+        data = validated_data.copy()
+
+        user = User(**data)
+        user.set_password(user.password)
+        user.save()
+
+        return user
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -11,35 +32,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ShopSerializer(serializers.ModelSerializer):
-    logo = serializers.SerializerMethodField()
-
-    def get_logo(self, obj):
-        return "{}{}".format("https://res.cloudinary.com/dndakokcz/", obj.logo)
-
     class Meta:
         model = Shop
         fields = ['id', 'name', 'date_created', 'logo', 'confirm_status', 'user']
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-    category = CategorySerializer()
-
-    def get_image(self, obj):
-        return "{}{}".format("https://res.cloudinary.com/dndakokcz/", obj.image)
-
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'price', 'image', 'shop', 'category']
-
-
-class UserSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
-
-    def get_avatar(self, obj):
-        if obj.avatar:
-            return "{}{}".format("https://res.cloudinary.com/dndakokcz/", obj.avatar)
-
-    class Meta:
-        model = User
-        fields = ["__all__"]

@@ -1,4 +1,4 @@
-from .models import User, Shop, Cart, CartDetail, Order, OrderDetail, Comment, Rating, Product, ReviewShop, \
+from .models import User, Shop,CartDetail, Order, OrderDetail, Comment, Rating, Product, ReviewShop, \
     ReviewProduct, Category
 from django.template.response import TemplateResponse
 from django.urls import path
@@ -55,16 +55,12 @@ class ReviewProductAdmin(admin.ModelAdmin):
     list_display = ['id', 'comment', 'rating', 'product']
 
 
-class CartAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user']
-
-
 class CartDetailAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'product', 'quantity', 'total_price']
+    list_display = ['id', 'user', 'product', 'quantity', 'total_price']
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'order_date', 'address', 'coupon', 'ship_fee', 'total_price']
+    list_display = ['id', 'user', 'order_date', 'address', 'coupon', 'ship_fee', 'total_price']
 
 
 class OrderDetailAdmin(admin.ModelAdmin):
@@ -79,7 +75,6 @@ admin_site.register(Product, ProductAdmin)
 admin_site.register(Comment, CommentAdmin)
 admin_site.register(Rating, RateAdmin)
 admin_site.register(ReviewShop, ReviewShopAdmin)
-admin_site.register(Cart, CartAdmin)
 admin_site.register(CartDetail, CartDetailAdmin)
 admin_site.register(Order, OrderAdmin)
 admin_site.register(OrderDetail, OrderDetailAdmin)

@@ -16,7 +16,7 @@ class Shop(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     logo = CloudinaryField('logo', null=False)
     confirm_status = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, related_name='shop')
 
     def __str__(self):
         return self.name
@@ -78,24 +78,20 @@ class ReviewProduct(models.Model):
     rating = models.OneToOneField('Rating', null=False, on_delete=models.CASCADE)
 
 
-class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-
-
 class CartDetail(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
     quantity = models.IntegerField(default=0)
     total_price = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='carts')
 
 
 class Order(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
     order_date = models.DateTimeField(auto_now_add=True)
     address = models.CharField(max_length=255)
     coupon = models.FloatField()
     ship_fee = models.IntegerField()
     total_price = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='orders')
 
     class Meta:
         ordering = ['id']
