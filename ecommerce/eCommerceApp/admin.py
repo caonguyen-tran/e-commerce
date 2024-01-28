@@ -1,9 +1,8 @@
-from .models import User, Shop,CartDetail, Order, OrderDetail, Comment, Rating, Product, ReviewShop, \
+from .models import User, Shop, CartDetail, Order, OrderDetail, Comment, Rating, Product, ReviewShop, \
     ReviewProduct, Category
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.contrib import admin
-from . import dao
 
 
 class CourseAppAdminSite(admin.AdminSite):

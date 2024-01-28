@@ -4,6 +4,8 @@ from cloudinary.models import CloudinaryField
 
 
 class User(AbstractUser):
+    phone = models.CharField(max_length=20, null=True)
+    address = models.CharField(max_length=255, null=True)
     avatar = CloudinaryField('avatar', null=False)
     is_admin = models.BooleanField(default=False)
     is_buyer = models.BooleanField(default=True)

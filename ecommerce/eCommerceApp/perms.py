@@ -6,6 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 #     def has_object_permission(self, request, view, obj):
 #         return self.has_permission(request, view) and request.user == obj.user
 
+class UserPermissions(IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        return self.has_permission(request, view) and request.user.id == obj.user.id
+
 
 class OwnerPermissions(IsAuthenticated):
 

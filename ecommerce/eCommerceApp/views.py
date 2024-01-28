@@ -3,8 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from . import serializer
-from .models import Category, Product, User, Shop
-from .perms import StaffPermissions, AdminPermissions, OwnerPermissions
+from .models import Category, Product, User, Shop, CartDetail
+from .perms import StaffPermissions, AdminPermissions, OwnerPermissions, UserPermissions
+from .utils import confirm_status_update, user_update
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -22,6 +23,23 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPI
 
         return [permissions.IsAuthenticated()]
 
+    @action(methods=['post'], detail=True, url_path='add-cart', url_name='add-cart')
+    def add_cart(self, request, pk):
+        user = request.user
+        product = Product.objects.get(pk=pk)
+        cart = user.carts.filter(product_id=pk).first()
+        if cart:
+            cart.quantity += 1
+            cart.total_price = int(cart.quantity * cart.product.price)
+            cart.save()
+        else:
+            new_cart = CartDetail(quantity=1, total_price=product.price, user=request.user,
+                                  product=product)
+            new_cart.save()
+
+        list_product = user.carts.all()
+        return Response(serializer.CartDetailSerializer(list_product, many=True).data, status=status.HTTP_201_CREATED)
+
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = User.objects.filter(is_active=True).all()
@@ -29,7 +47,7 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     parser_classes = [parsers.MultiPartParser]
 
     def get_permissions(self):
-        if self.action in ['current-user', 'create-shop']:
+        if self.action in ['current_user', 'create_shop']:
             return [permissions.IsAuthenticated()]
 
         return [permissions.AllowAny()]
@@ -38,10 +56,11 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     def current_user(self, request):
         return Response(serializer.UserSerializer(request.user).data, status=status.HTTP_200_OK)
 
-    @action(methods=['post'], detail=True, url_name='create-shop', url_path='create-shop')
-    def create_shop(self, request, pk):
+    @action(methods=['post'], detail=False, url_name='create-shop', url_path='create-shop')
+    def create_shop(self, request):
         try:
-            shop = Shop.objects.create(name=request.data.get('name'), logo=request.data.get('logo'), user_id=pk)
+            shop = Shop.objects.create(name=request.data.get('name'), logo=request.data.get('logo'),
+                                       user_id=request.user.id)
             shop.save()
             return Response(serializer.ShopSerializer(shop).data, status=status.HTTP_201_CREATED)
         except Shop.DoesNotExist:
@@ -55,9 +74,8 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPIVie
     def get_permissions(self):
         if self.action in ['confirm']:
             return [StaffPermissions()]
-
-        elif self.action in ['add-product']:
-            return [OwnerPermissions()]
+        elif self.action in ['add_product']:
+            return [UserPermissions()]
 
         return [permissions.AllowAny()]
 
@@ -65,9 +83,9 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPIVie
     def confirm(self, request, pk):
         try:
             shop = Shop.objects.get(pk=pk)
-            shop.confirm_status = True
-            shop.save()
-            return Response(serializer.ShopSerializer(shop).data)
+            user_update(shop.user)
+            shop_update = confirm_status_update(shop)
+            return Response(serializer.ShopSerializer(shop_update).data)
         except Shop.DoesNotExist:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -76,8 +94,11 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPIVie
         try:
             p = Product.objects.create(name=request.data.get('name'), price=request.data.get('price'),
                                        description=request.data.get('description'), image=request.data.get('image'),
-                                       category_id=request.data.get('category'), shop_id=pk)
+                                       category_id=request.data.get('category_id'), shop_id=self.get_object().id)
+            print(request.user)
             p.save()
             return Response(serializer.ProductSerializer(p).data, status=status.HTTP_201_CREATED)
         except Product.DoesNotExist:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
