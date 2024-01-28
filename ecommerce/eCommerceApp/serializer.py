@@ -1,6 +1,6 @@
 import cloudinary.api
 from rest_framework import serializers
-from .models import Category, Product, Shop, User, CartDetail
+from .models import Category, Product, Shop, User, CartDetail, Order, OrderDetail, Pay
 from cloudinary import CloudinaryResource
 
 
@@ -46,6 +46,8 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    shop = ShopSerializer()
+
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'price', 'image', 'shop', 'category']
@@ -53,7 +55,31 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class CartDetailSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
+    user = UserSerializer()
 
     class Meta:
         model = CartDetail
         fields = ['id', 'product', 'quantity', 'total_price', 'user']
+
+
+class PaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pay
+        fields = ['id', 'name', 'image']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    pay = PaySerializer()
+
+    class Meta:
+        model = Order
+        fields = ['id', 'order_date', 'address', 'total_price', 'user', 'pay']
+
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    order = OrderSerializer()
+    product = ProductSerializer()
+
+    class Meta:
+        model = OrderDetail
+        fields = ['id', 'quantity', 'total_price', 'order', 'product']

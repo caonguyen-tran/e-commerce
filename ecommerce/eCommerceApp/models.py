@@ -16,6 +16,7 @@ class User(AbstractUser):
 class Shop(models.Model):
     name = models.CharField(max_length=200, null=False)
     date_created = models.DateTimeField(auto_now_add=True)
+    address = models.CharField(max_length=255, null=True)
     logo = CloudinaryField('logo', null=False)
     confirm_status = models.BooleanField(default=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, related_name='shop')
@@ -90,9 +91,8 @@ class CartDetail(models.Model):
 class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     address = models.CharField(max_length=255)
-    coupon = models.FloatField()
-    ship_fee = models.IntegerField()
     total_price = models.IntegerField()
+    pay = models.ForeignKey('Pay', on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='orders')
 
     class Meta:
@@ -107,3 +107,8 @@ class OrderDetail(models.Model):
 
     class Meta:
         ordering = ['order']
+
+
+class Pay(models.Model):
+    name = models.CharField(max_length=255, null=False)
+    image = CloudinaryField('image', null=False)

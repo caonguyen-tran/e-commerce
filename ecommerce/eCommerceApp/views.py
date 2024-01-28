@@ -3,9 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from . import serializer
-from .models import Category, Product, User, Shop, CartDetail
-from .perms import StaffPermissions, AdminPermissions, OwnerPermissions, UserPermissions
-from .utils import confirm_status_update, user_update
+from .models import Category, Product, User, Shop, CartDetail, Order, Pay, OrderDetail
+from .perms import StaffPermissions, ShopConfirmPermissions, UserPermissions, ProductOwnerPermissions, OwnerPermissions
+from .utils import confirm_status_update, user_update, sum_price
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -20,7 +20,8 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPI
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             return [permissions.AllowAny()]
-
+        elif self.action in ['destroy']:
+            return [ProductOwnerPermissions()]
         return [permissions.IsAuthenticated()]
 
     @action(methods=['post'], detail=True, url_path='add-cart', url_name='add-cart')
@@ -72,10 +73,10 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPIVie
     serializer_class = serializer.ShopSerializer
 
     def get_permissions(self):
-        if self.action in ['confirm']:
-            return [StaffPermissions()]
-        elif self.action in ['add_product']:
-            return [UserPermissions()]
+        # if self.action in ['confirm']:
+        #     return [StaffPermissions()]
+        if self.action in ['add_product']:
+            return [ShopConfirmPermissions()]
 
         return [permissions.AllowAny()]
 
@@ -95,10 +96,53 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPIVie
             p = Product.objects.create(name=request.data.get('name'), price=request.data.get('price'),
                                        description=request.data.get('description'), image=request.data.get('image'),
                                        category_id=request.data.get('category_id'), shop_id=self.get_object().id)
-            print(request.user)
             p.save()
             return Response(serializer.ProductSerializer(p).data, status=status.HTTP_201_CREATED)
         except Product.DoesNotExist:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class CartViewSet(viewsets.ViewSet, generics.ListAPIView):
+    serializer_class = serializer.CartDetailSerializer
+    queryset = CartDetail.objects.all()
+
+    def get_permissions(self):
+        if self.action in ['remove_product']:
+            return [OwnerPermissions()]
+
+        return [permissions.IsAuthenticated()]
+
+    def list(self, request):
+        current_user = request.user
+        queryset = current_user.carts.all()
+        return Response(serializer.CartDetailSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
+
+    @action(methods=['delete'], detail=True, url_name='remove-product', url_path='remove-product')
+    def remove_product(self, request, pk):
+        try:
+            pd = CartDetail.objects.get(pk=pk)
+            pd.delete()
+            query = request.user.carts.all()
+            return Response(serializer.CartDetailSerializer(query, many=True).data, status=status.HTTP_200_OK)
+        except CartDetail.DoesNotExist:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(methods=['post'], detail=False)
+    def checkout(self, request):
+        try:
+            list_product = request.user.carts.all()
+            if list_product.exists():
+                total_price = sum_price(list_product)
+                pay = Pay.objects.get(pk=request.data.get('pay_id'))
+                order = Order(address=request.data.get('address'), total_price=total_price, user=request.user, pay=pay)
+                order.save()
+                for item in list_product:
+                    order_item = OrderDetail(quantity=item.quantity, total_price=item.total_price, order=order,
+                                             product=item.product)
+                    order_item.save()
+                    item.delete()
+                return Response(status=status.HTTP_201_CREATED)
+            else:
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except Pay.DoesNotExist:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

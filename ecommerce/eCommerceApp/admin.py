@@ -1,5 +1,5 @@
 from .models import User, Shop, CartDetail, Order, OrderDetail, Comment, Rating, Product, ReviewShop, \
-    ReviewProduct, Category
+    ReviewProduct, Category, Pay
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.contrib import admin
@@ -59,11 +59,15 @@ class CartDetailAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'order_date', 'address', 'coupon', 'ship_fee', 'total_price']
+    list_display = ['id', 'user', 'order_date', 'address', 'total_price']
 
 
 class OrderDetailAdmin(admin.ModelAdmin):
     list_display = ['id', 'order', 'product', 'quantity', 'total_price']
+
+
+class PayAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'image']
 
 
 admin_site = CourseAppAdminSite(name='eCommerceApp')
@@ -79,3 +83,4 @@ admin_site.register(Order, OrderAdmin)
 admin_site.register(OrderDetail, OrderDetailAdmin)
 admin_site.register(ReviewProduct, ReviewProductAdmin)
 admin_site.register(Category, CategoryAdmin)
+admin_site.register(Pay, PayAdmin)
