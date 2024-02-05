@@ -1703,6 +1703,13 @@
     "mkdirp" "^1.0.4"
     "rimraf" "^3.0.2"
 
+"@react-native-async-storage/async-storage@^1.21.0":
+  "integrity" "sha512-JL0w36KuFHFCvnbOXRekqVAUplmOyT/OuCQkogo6X98MtpSaJOKEAeZnYO8JB0U/RIEixZaGI5px73YbRm/oag=="
+  "resolved" "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-1.21.0.tgz"
+  "version" "1.21.0"
+  dependencies:
+    "merge-options" "^3.0.4"
+
 "@react-native-community/cli-clean@12.3.0":
   "integrity" "sha512-iAgLCOWYRGh9ukr+eVQnhkV/OqN3V2EGd/in33Ggn/Mj4uO6+oUncXFwB+yjlyaUNz6FfjudhIz09yYGSF+9sg=="
   "resolved" "https://registry.npmjs.org/@react-native-community/cli-clean/-/cli-clean-12.3.0.tgz"
@@ -2095,6 +2102,14 @@
   "resolved" "https://registry.npmjs.org/@react-navigation/elements/-/elements-1.3.21.tgz"
   "version" "1.3.21"
 
+"@react-navigation/native-stack@^6.9.17":
+  "integrity" "sha512-X8p8aS7JptQq7uZZNFEvfEcPf6tlK4PyVwYDdryRbG98B4bh2wFQYMThxvqa+FGEN7USEuHdv2mF0GhFKfX0ew=="
+  "resolved" "https://registry.npmjs.org/@react-navigation/native-stack/-/native-stack-6.9.17.tgz"
+  "version" "6.9.17"
+  dependencies:
+    "@react-navigation/elements" "^1.3.21"
+    "warn-once" "^0.1.0"
+
 "@react-navigation/native@^6.0.0", "@react-navigation/native@^6.1.9":
   "integrity" "sha512-AMuJDpwXE7UlfyhIXaUCCynXmv69Kb8NzKgKJO7v0k0L+u6xUTbt6xvshmJ79vsvaFyaEH9Jg5FMzek5/S5qNw=="
   "resolved" "https://registry.npmjs.org/@react-navigation/native/-/native-6.1.9.tgz"
@@ -2111,6 +2126,15 @@
   "version" "6.1.9"
   dependencies:
     "nanoid" "^3.1.23"
+
+"@react-navigation/stack@^6.3.20":
+  "integrity" "sha512-vE6mgZzOgoa5Uy7ayT97Cj+ZIK7DK+JBYVuKUViILlWZy6IWK7HFDuqoChSbZ1ajTIfAxj/acVGg1jkbAKsToA=="
+  "resolved" "https://registry.npmjs.org/@react-navigation/stack/-/stack-6.3.20.tgz"
+  "version" "6.3.20"
+  dependencies:
+    "@react-navigation/elements" "^1.3.21"
+    "color" "^4.2.3"
+    "warn-once" "^0.1.0"
 
 "@segment/loosely-validate-event@^2.0.0":
   "integrity" "sha512-ZMCSfztDBqwotkl848ODgVcAmN4OItEWDCkshcKz0/W6gGSQayuuCtWV/MlodFivAZD793d6UgANd6wCXUfrIw=="
@@ -3347,6 +3371,18 @@
   dependencies:
     "fontfaceobserver" "^2.1.0"
 
+"expo-image-loader@~4.6.0":
+  "integrity" "sha512-RHQTDak7/KyhWUxikn2yNzXL7i2cs16cMp6gEAgkHOjVhoCJQoOJ0Ljrt4cKQ3IowxgCuOrAgSUzGkqs7omj8Q=="
+  "resolved" "https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-4.6.0.tgz"
+  "version" "4.6.0"
+
+"expo-image-picker@^14.7.1":
+  "integrity" "sha512-ILQVOJgI3aEzrDmCFGDPtpAepYkn8mot8G7vfQ51BfFdQbzL6N3Wm1fS/ofdWlAZJl/qT2DwaIh5xYmf3SyGZA=="
+  "resolved" "https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-14.7.1.tgz"
+  "version" "14.7.1"
+  dependencies:
+    "expo-image-loader" "~4.6.0"
+
 "expo-keep-awake@~12.8.2":
   "integrity" "sha512-uiQdGbSX24Pt8nGbnmBtrKq6xL/Tm3+DuDRGBk/3ZE/HlizzNosGRIufIMJ/4B4FRw4dw8KU81h2RLuTjbay6g=="
   "resolved" "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-12.8.2.tgz"
@@ -4007,6 +4043,11 @@
   "resolved" "https://registry.npmjs.org/is-path-inside/-/is-path-inside-3.0.3.tgz"
   "version" "3.0.3"
 
+"is-plain-obj@^2.1.0":
+  "integrity" "sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA=="
+  "resolved" "https://registry.npmjs.org/is-plain-obj/-/is-plain-obj-2.1.0.tgz"
+  "version" "2.1.0"
+
 "is-plain-object@^2.0.4":
   "integrity" "sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og=="
   "resolved" "https://registry.npmjs.org/is-plain-object/-/is-plain-object-2.0.4.tgz"
@@ -4454,6 +4495,13 @@
   "integrity" "sha512-OcjA+jzjOYzKmKS6IQVALHLVz+rNTMPoJvCztFaZxwG14wtAW7VRZjwTQu06vKCYOxh4jVnik7ya0SXTB0W+xA=="
   "resolved" "https://registry.npmjs.org/memory-cache/-/memory-cache-0.2.0.tgz"
   "version" "0.2.0"
+
+"merge-options@^3.0.4":
+  "integrity" "sha512-2Sug1+knBjkaMsMgf1ctR1Ujx+Ayku4EdJN4Z+C2+JzoeF7A3OZ9KM2GY0CpQS51NR61LTurMJrRKPhSs3ZRTQ=="
+  "resolved" "https://registry.npmjs.org/merge-options/-/merge-options-3.0.4.tgz"
+  "version" "3.0.4"
+  dependencies:
+    "is-plain-obj" "^2.1.0"
 
 "merge-stream@^2.0.0":
   "integrity" "sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w=="
@@ -5408,7 +5456,7 @@
     "react-freeze" "^1.0.0"
     "warn-once" "^0.1.0"
 
-"react-native@*", "react-native@0.73.2":
+"react-native@*", "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@0.73.2":
   "integrity" "sha512-7zj9tcUYpJUBdOdXY6cM8RcXYWkyql4kMyGZflW99E5EuFPoC7Ti+ZQSl7LP9ZPzGD0vMfslwyDW0I4tPWUCFw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.73.2.tgz"
   "version" "0.73.2"

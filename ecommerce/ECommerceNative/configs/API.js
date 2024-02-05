@@ -2,6 +2,7 @@ import axios from "axios";
 
 
 export const endpoints = {
+    'login': '/o/token/',
     'register': '/user/',
     'create-shop': '/user/create-shop/',
     'current-user': '/user/current-user/',
@@ -23,14 +24,14 @@ export const endpoints = {
 }
 
 export const authApi = (accessToken) => axios.create({
-    baseURL: "",
+    baseURL: "http://127.0.0.1:8000",
     headers: {
         Authorization: `Bearer ${accessToken}`
     }
 })
 
 export default axios.create({
-    baseURL: ""
+    baseURL: "http://127.0.0.1:8000"
 })
 
 

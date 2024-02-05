@@ -1,17 +1,20 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Home from './components/Home/Home';
-import Product from './components/Products/Product';
+import Login from './components/User/Login';
+import Register from './components/User/Register';
+import Intro from './components/User/Intro';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Drawer = createDrawerNavigator()
+const Stack = createNativeStackNavigator()
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Screen name='Drawer 1' component={Home}/> 
-      <Drawer.Screen  name ='Drawer 2' component={Product}/>
+      <Stack.Navigator>
+        <Stack.Screen name='Intro' component={Intro} options={{headerShown: false}}/>
+        <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/> 
+        <Stack.Screen  name ='Register' component={Register} options={{headerShown: false}}/>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

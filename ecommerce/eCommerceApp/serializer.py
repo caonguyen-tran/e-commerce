@@ -5,17 +5,6 @@ from cloudinary import CloudinaryResource
 
 
 class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'phone', 'address', 'is_active',
-                  'date_joined',
-                  'avatar', 'is_admin', 'is_buyer', 'is_seller', 'is_employee']
-        extra_kwargs = {
-            'password': {
-                'write_only': True
-            }
-        }
-
     def create(self, validated_data):
         data = validated_data.copy()
 
@@ -30,6 +19,17 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'phone', 'address', 'is_active',
+                  'date_joined',
+                  'avatar', 'is_admin', 'is_buyer', 'is_seller', 'is_employee']
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,7 +38,15 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ShopSerializer(serializers.ModelSerializer):
+    logo = serializers.SerializerMethodField(source='logo')
     user = UserSerializer()
+
+    def get_logo(self, shop):
+        if shop.logo:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri('/static/%s' % shop.logo.name)
+            return '/static/%s' % shop.logo.name
 
     class Meta:
         model = Shop
@@ -46,7 +54,15 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField(source='image')
     shop = ShopSerializer()
+
+    def get_image(self, product):
+        if product.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri('/static/%s' % product.image.name)
+            return '/static/%s' % product.image.name
 
     class Meta:
         model = Product

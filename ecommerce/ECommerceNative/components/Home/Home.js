@@ -1,4 +1,4 @@
-import { Text, View } from "react-native-reanimated/lib/typescript/Animated"
+import {View, Text} from 'react-native'
 import MyStyle from "../../MyStyle/MyStyle"
 
 

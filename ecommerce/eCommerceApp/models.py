@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from cloudinary.models import CloudinaryField
 
 
 class User(AbstractUser):
     phone = models.CharField(max_length=20, null=True)
     address = models.CharField(max_length=255, null=True)
-    avatar = CloudinaryField('avatar', null=False)
+    avatar = models.ImageField(upload_to='user/%Y/%m', default="user/2024/02/avatardefault.jpg")
     is_admin = models.BooleanField(default=False)
     is_buyer = models.BooleanField(default=True)
     is_employee = models.BooleanField(default=False)
@@ -17,7 +16,7 @@ class Shop(models.Model):
     name = models.CharField(max_length=200, null=False)
     date_created = models.DateTimeField(auto_now_add=True)
     address = models.CharField(max_length=255, null=True)
-    logo = CloudinaryField('logo', null=False)
+    logo = models.ImageField(upload_to="shop_logo/%Y/%m", default="shop_logo/2024/02/shoplogo1.jpg")
     confirm_status = models.BooleanField(default=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, related_name='shop')
 
@@ -36,7 +35,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200, null=False)
     price = models.IntegerField(null=False)
     description = models.TextField(null=False)
-    image = CloudinaryField('image', null=False)
+    image = models.ImageField(upload_to="product/%Y/%m")
     shop = models.ForeignKey('Shop', on_delete=models.CASCADE, null=False)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
 
@@ -111,4 +110,4 @@ class OrderDetail(models.Model):
 
 class Pay(models.Model):
     name = models.CharField(max_length=255, null=False)
-    image = CloudinaryField('image', null=False)
+    image = models.ImageField(upload_to="pay/%Y/%m", default="pay/2024/02/pay_default.jpg", null=False)

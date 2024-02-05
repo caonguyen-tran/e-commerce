@@ -53,9 +53,24 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
         return [permissions.AllowAny()]
 
+    # @action(methods=['post'], detail=False, url_path='create-user', url_name='create-user')
+    # def create_user(self, request):
+    #     try:
+    #         user = User.objects.create(username=request.data.get('username'), password=request.data.get('password'),
+    #                                    first_name=request.data.get('first_name'),
+    #                                    last_name=request.data.get('last_name'), email=request.data.get('email'),
+    #                                    avatar=request.data.get('avatar'), address=request.data.get('address'),
+    #                                    phone=request.data.get('phone'))
+    #         user.save()
+    #         return Response(serializer.UserSerializer(user, context={'request': request}).data,
+    #                         status=status.HTTP_201_CREATED)
+    #     except User.DoesNotExist:
+    #         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     @action(methods=['get'], detail=False, url_name='current-user', url_path='current-user')
     def current_user(self, request):
-        return Response(serializer.UserSerializer(request.user).data, status=status.HTTP_200_OK)
+        return Response(serializer.UserSerializer(request.user, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=False, url_name='create-shop', url_path='create-shop')
     def create_shop(self, request):
@@ -63,7 +78,8 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
             shop = Shop.objects.create(name=request.data.get('name'), logo=request.data.get('logo'),
                                        user_id=request.user.id)
             shop.save()
-            return Response(serializer.ShopSerializer(shop).data, status=status.HTTP_201_CREATED)
+            return Response(serializer.ShopSerializer(shop, context={'request': request}).data,
+                            status=status.HTTP_201_CREATED)
         except Shop.DoesNotExist:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -86,7 +102,7 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPIVie
             shop = Shop.objects.get(pk=pk)
             user_update(shop.user)
             shop_update = confirm_status_update(shop)
-            return Response(serializer.ShopSerializer(shop_update).data)
+            return Response(serializer.ShopSerializer(shop_update, context={'request': request}).data)
         except Shop.DoesNotExist:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -97,7 +113,8 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.DestroyAPIVie
                                        description=request.data.get('description'), image=request.data.get('image'),
                                        category_id=request.data.get('category_id'), shop_id=self.get_object().id)
             p.save()
-            return Response(serializer.ProductSerializer(p).data, status=status.HTTP_201_CREATED)
+            return Response(serializer.ProductSerializer(p, context={'request': request}).data,
+                            status=status.HTTP_201_CREATED)
         except Product.DoesNotExist:
             return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
